@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 import os
 from models import db, User, Manga, Chapter, Genre
 from auth import auth
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-here')
@@ -28,6 +29,7 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
 db.init_app(app)
+migrate = Migrate(app, db)
 
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
@@ -254,7 +256,19 @@ def add_genre():
         flash('تم إضافة التصنيف بنجاح!', 'success')
     return redirect(url_for('manage_genres'))
 
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return render_template('error.html', error=error), 500
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('error.html', error=error), 404
+
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()
+        try:
+            db.create_all()
+        except Exception as e:
+            print(f"Error creating database tables: {e}")
     app.run(debug=True)
