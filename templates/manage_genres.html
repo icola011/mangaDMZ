@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}إدارة التصنيفات{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="text-center mb-4">إدارة التصنيفات</h1>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST" action="{{ url_for('add_genre') }}" class="mb-4">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="name" placeholder="اسم التصنيف الجديد" required>
+                        <button type="submit" class="btn btn-primary">إضافة</button>
+                    </div>
+                </form>
+
+                <div class="list-group">
+                    {% for genre in genres %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ genre.name }}
+                        <span class="badge bg-primary rounded-pill">{{ genre.mangas|length }}</span>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">لا توجد تصنيفات حالياً</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

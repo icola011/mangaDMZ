@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}تعديل الفصل {{ chapter.chapter_number }} - {{ chapter.manga.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="text-center mb-4">تعديل الفصل {{ chapter.chapter_number }}</h1>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="chapter_number" class="form-label">رقم الفصل</label>
+                        <input type="number" step="0.1" class="form-control" id="chapter_number" 
+                               name="chapter_number" value="{{ chapter.chapter_number }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="chapter_title" class="form-label">عنوان الفصل</label>
+                        <input type="text" class="form-control" id="chapter_title" 
+                               name="chapter_title" value="{{ chapter.title }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="new_pages" class="form-label">صفحات جديدة</label>
+                        <input type="file" class="form-control" id="new_pages" 
+                               name="new_pages" accept="image/*" multiple>
+                        <small class="form-text">اترك هذا الحقل فارغاً للاحتفاظ بالصفحات الحالية</small>
+                    </div>
+
+                    <h3 class="mt-4 mb-3">الصفحات الحالية</h3>
+                    <div class="row row-cols-2 row-cols-md-3 g-4 mb-4">
+                        {% for page in chapter.pages.split(',') %}
+                        <div class="col">
+                            <div class="card h-100">
+                                <img src="{{ url_for('static', filename='uploads/' + page) }}" 
+                                     class="card-img-top" alt="صفحة {{ loop.index }}">
+                                <div class="card-body">
+                                    <p class="card-text text-center">صفحة {{ loop.index }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+                        <a href="{{ url_for('read_chapter', chapter_id=chapter.id) }}" 
+                           class="btn btn-secondary">إلغاء</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

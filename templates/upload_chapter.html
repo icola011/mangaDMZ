@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}رفع فصل جديد - {{ manga.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h1 class="mb-4 text-center">رفع فصل جديد لـ {{ manga.title }}</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="alert alert-info">
+            <strong>ملاحظة:</strong> الحد الأقصى لحجم الملف الواحد هو 64 ميجابايت. الحد الأقصى للحجم الإجمالي هو 100 ميجابايت.
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="chapter_number" class="form-label">رقم الفصل</label>
+                        <input type="number" class="form-control" id="chapter_number" name="chapter_number" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="chapter_title" class="form-label">عنوان الفصل</label>
+                        <input type="text" class="form-control" id="chapter_title" name="chapter_title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="pages" class="form-label">صفحات الفصل</label>
+                        <input type="file" class="form-control" id="pages" name="pages" accept="image/*" multiple required>
+                        <small class="form-text">
+                            حدد جميع صفحات هذا الفصل. سيتم عرضها بالترتيب المحدد.<br>
+                            الصيغ المدعومة: JPG, PNG, GIF<br>
+                            للحصول على أداء أفضل، يرجى تحسين حجم الصور قبل الرفع.
+                        </small>
+                    </div>
+                    <div id="upload-preview" class="mb-3"></div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg">رفع الفصل</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('pages').addEventListener('change', function(e) {
+    const files = Array.from(e.target.files);
+    const preview = document.getElementById('upload-preview');
+    preview.innerHTML = '';
+
+    if (files.length > 0) {
+        const totalSize = files.reduce((acc, file) => acc + file.size, 0);
+        const totalSizeMB = (totalSize / (1024 * 1024)).toFixed(2);
+        
+        preview.innerHTML = `
+            <div class="alert ${totalSize > 100 * 1024 * 1024 ? 'alert-danger' : 'alert-info'}">
+                تم تحديد ${files.length} ملف${files.length !== 1 ? 'ات' : ''}<br>
+                الحجم الإجمالي: ${totalSizeMB} ميجابايت
+                ${totalSize > 100 * 1024 * 1024 ? '<br><strong>تحذير: الحجم الإجمالي يتجاوز الحد الأقصى (100 ميجابايت)!</strong>' : ''}
+            </div>
+        `;
+    }
+});
+</script>
+{% endblock %}

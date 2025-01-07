@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}تعديل {{ manga.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="text-center mb-4">تعديل {{ manga.title }}</h1>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">العنوان</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ manga.title }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="author" class="form-label">المؤلف</label>
+                        <input type="text" class="form-control" id="author" name="author" value="{{ manga.author }}">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="release_date" class="form-label">تاريخ الإصدار</label>
+                        <input type="date" class="form-control" id="release_date" name="release_date" 
+                               value="{{ manga.release_date.strftime('%Y-%m-%d') if manga.release_date else '' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">الوصف</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required>{{ manga.description }}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="genres" class="form-label">التصنيفات</label>
+                        <select class="form-select" id="genres" name="genres" multiple>
+                            {% for genre in genres %}
+                            <option value="{{ genre.id }}" 
+                                    {% if genre in manga.genres %}selected{% endif %}>
+                                {{ genre.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="cover" class="form-label">صورة الغلاف</label>
+                        <input type="file" class="form-control" id="cover" name="cover" accept="image/*">
+                        <small class="form-text">اترك هذا الحقل فارغاً للاحتفاظ بالصورة الحالية</small>
+                    </div>
+
+                    {% if manga.cover_image %}
+                    <div class="mb-3 text-center">
+                        <img src="{{ url_for('static', filename='uploads/' + manga.cover_image) }}" 
+                             alt="{{ manga.title }}" 
+                             class="img-fluid rounded" 
+                             style="max-height: 300px;">
+                    </div>
+                    {% endif %}
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+                        <a href="{{ url_for('manga_detail', manga_id=manga.id) }}" class="btn btn-secondary">إلغاء</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

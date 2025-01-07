@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}رفع مانجا جديدة{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-right mb-4">رفع مانجا جديدة</h2>
+    <form method="POST" enctype="multipart/form-data" class="text-right">
+        <div class="mb-3">
+            <label for="title" class="form-label">العنوان</label>
+            <input type="text" class="form-control" id="title" name="title" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="description" class="form-label">الوصف</label>
+            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+        </div>
+        
+        <div class="mb-3">
+            <label for="author" class="form-label">المؤلف</label>
+            <input type="text" class="form-control" id="author" name="author">
+        </div>
+        
+        <div class="mb-3">
+            <label for="release_date" class="form-label">تاريخ الإصدار</label>
+            <input type="date" class="form-control" id="release_date" name="release_date">
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">التصنيفات</label>
+            <div class="row">
+                {% for genre in genres %}
+                <div class="col-md-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="genres" value="{{ genre.id }}" id="genre{{ genre.id }}">
+                        <label class="form-check-label" for="genre{{ genre.id }}">
+                            {{ genre.name }}
+                        </label>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label for="cover" class="form-label">صورة الغلاف</label>
+            <input type="file" class="form-control" id="cover" name="cover" accept="image/*" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">رفع المانجا</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}الفصل {{ chapter.chapter_number }} - {{ chapter.manga.title }}{% endblock %}
+
+{% block content %}
+<div class="chapter-reader">
+    <div class="text-center mb-4">
+        <h1>{{ chapter.manga.title }}</h1>
+        <h2 class="text-muted">الفصل {{ chapter.chapter_number }}</h2>
+        {% if chapter.title %}
+        <h3 class="text-muted">{{ chapter.title }}</h3>
+        {% endif %}
+    </div>
+
+    <div class="navigation-buttons mb-4">
+        <div class="btn-group">
+            <a href="{{ url_for('manga_detail', manga_id=chapter.manga.id) }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-right"></i> العودة للمانجا
+            </a>
+            {% if chapter.chapter_number > 1 %}
+            <a href="#" class="btn btn-primary disabled">الفصل السابق</a>
+            {% endif %}
+            <a href="#" class="btn btn-primary disabled">الفصل التالي</a>
+        </div>
+    </div>
+
+    <div class="chapter-pages">
+        {% for page in pages %}
+        <div class="page-container text-center mb-4">
+            <img src="{{ url_for('static', filename='uploads/' + page) }}" 
+                 class="manga-page" 
+                 alt="صفحة {{ loop.index }}"
+                 loading="lazy">
+            <div class="page-number mt-2 text-muted">
+                صفحة {{ loop.index }} من {{ pages|length }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="navigation-buttons mt-4">
+        <div class="btn-group">
+            <a href="{{ url_for('manga_detail', manga_id=chapter.manga.id) }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-right"></i> العودة للمانجا
+            </a>
+            {% if chapter.chapter_number > 1 %}
+            <a href="#" class="btn btn-primary disabled">الفصل السابق</a>
+            {% endif %}
+            <a href="#" class="btn btn-primary disabled">الفصل التالي</a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Add dark mode toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const body = document.body;
+    const isDarkMode = localStorage.getItem('darkMode') === 'true';
+    
+    if (isDarkMode) {
+        body.classList.add('dark-mode');
+    }
+    
+    // Add keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowLeft') {
+            // Next chapter
+            const nextButton = document.querySelector('a.btn:contains("الفصل التالي")');
+            if (nextButton && !nextButton.classList.contains('disabled')) {
+                nextButton.click();
+            }
+        } else if (e.key === 'ArrowRight') {
+            // Previous chapter
+            const prevButton = document.querySelector('a.btn:contains("الفصل السابق")');
+            if (prevButton && !prevButton.classList.contains('disabled')) {
+                prevButton.click();
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
